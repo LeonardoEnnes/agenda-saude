@@ -1,0 +1,34 @@
+# Build results
+bin/
+obj/
+
+# Rider / IntelliJ
+.idea/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.tmp
+
+# Logs
+*.log
+
+# Generated files
+*.exe
+*.dll
+*.pdb
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# NuGet packages
+*.nupkg
+
+# configs
+appsettings.Development.json
+appsettings.json    
