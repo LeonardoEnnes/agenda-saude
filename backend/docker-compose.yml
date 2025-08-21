@@ -1,0 +1,55 @@
+﻿name: agenda-saude-api
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agenda-saude-app
+    environment:
+      ConnectionStrings__Default: "Host=psql;Port=5432;Database=${DB_DATABASE};Username=${DB_USERNAME};Password=${DB_PASSWORD}"
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:7084;http://+:8080
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: ${CERT_PASSWORD}
+    ports:
+      - "8080:8080"
+      - "7084:7084"
+    depends_on:
+      - psql
+      - redis
+    volumes:
+      - ${USERPROFILE}\.aspnet\https:/https
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  
+  psql:
+    image: postgres:16
+    container_name: agenda-saude-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+        
+  redis:
+    image: redis:alpine
+    container_name: agenda-saude-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - default
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      retries: 3
+      timeout: 5s
+
+volumes:
+  postgres_data:
+  redis_data:
